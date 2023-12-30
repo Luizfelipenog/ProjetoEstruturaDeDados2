@@ -101,9 +101,6 @@ void removerMusica(Musicas **a, char nome[20]) {
     }
 }
 
-
-
-
 void liberarMem_M(Musicas *pessoas){
     Musicas *aux;
     aux = pessoas;
