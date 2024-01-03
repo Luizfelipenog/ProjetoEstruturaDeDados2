@@ -45,6 +45,7 @@ Artista *criaNo(char *nome, char *estilo, int num_albuns, Artista *noEsq, Artist
     no->esq = noEsq;
     no->centro = noCentro;
     no->dir = NULL;
+    no->info_2 = NULL;
     return no;
 }
 
@@ -267,4 +268,147 @@ void mostrar_album(Artista *raiz, int posicao)
         imprimir_album(raiz->info_1->lista_albuns->arvore_album);
     else if(posicao == 2)
         imprimir_album(raiz->info_2->lista_albuns->arvore_album);
+}
+
+
+
+Artista* findminimum_A(Artista* no) {
+    if (no == NULL) 
+        return NULL;  
+    
+    while (no->esq != NULL) 
+        no = no->esq;
+    
+    return no;
+}
+
+Artista* findmaximum_A(Artista* no) {
+    if (no == NULL) 
+        return NULL;  
+    
+    while (no->dir != NULL) 
+        no = no->dir;
+    
+    return no;
+}
+
+void merge_A(Artista **raiz) {
+    if (*raiz == NULL || (*raiz)->num_info == 1) 
+        return;
+
+    Artista *pai = NULL; 
+    Artista *irmao = NULL; 
+
+    if ((*raiz)->esq != NULL) {
+        pai = *raiz;
+        irmao = (*raiz)->esq;
+    } else if ((*raiz)->dir != NULL) {
+        pai = *raiz;
+        irmao = (*raiz)->dir;
+    } else if ((*raiz)->centro != NULL) {
+        pai = *raiz;
+        irmao = (*raiz)->centro;
+    } else if ((*raiz)->esq != NULL && (*raiz)->dir != NULL) {
+        pai = *raiz;
+        irmao = (*raiz)->esq;
+    }
+
+    if (irmao != NULL && irmao->num_info == 1) {
+        if (pai->esq == *raiz) {
+            pai->centro = irmao->esq;
+            pai->info_2 = pai->info_1;
+            pai->info_1 = irmao->info_1;
+            pai->dir = irmao->centro;
+            free(irmao);
+            pai->num_info = 2;
+        } else if (pai->centro == *raiz) {
+            pai->info_2 = irmao->info_1;
+            pai->dir = pai->centro;
+            pai->centro = irmao->centro;
+            free(irmao);
+            pai->num_info = 2;
+        } else if (pai->dir == *raiz) {
+            pai->info_2 = irmao->info_1;
+            pai->dir = irmao->centro;
+            free(irmao);
+            pai->num_info = 2;
+        }
+    } else {
+        if (pai->esq == *raiz) {
+            irmao->info_1 = pai->info_1;
+            pai->info_1 = pai->info_2;
+            irmao->centro = irmao->esq;
+            irmao->esq = irmao->dir;
+            irmao->dir = NULL;
+            pai->num_info = 1;
+        } else if (pai->centro == *raiz) {
+            irmao->info_1 = pai->info_1;
+            pai->info_1 = pai->info_2;
+            irmao->dir = irmao->esq;
+            irmao->esq = irmao->centro;
+            irmao->centro = NULL;
+            pai->num_info = 1;
+        } else if (pai->dir == *raiz) {
+            irmao->info_1 = pai->info_2;
+            irmao->centro = irmao->dir;
+            irmao->dir = NULL;
+            pai->num_info = 1;
+        }
+    }
+}
+
+
+void removeArtista(Artista **raiz, char titulo[50]) {
+    if (*raiz == NULL)
+        return;     
+
+    if (*raiz == NULL)
+        return;     
+
+    if (strcmp((*raiz)->info_1->nome, titulo) == 0 || strcmp((*raiz)->info_2->nome, titulo) == 0) {
+        if (folha(*raiz)) {
+            if (strcmp((*raiz)->info_1->nome, titulo) == 0){
+                if((*raiz)->info_2 != NULL){
+                    // Usando memcpy para copiar a memória de info_1 para info_2
+                    memcpy(&(*raiz)->info_2, &(*raiz)->info_1, sizeof(Artista));
+                    free((*raiz)->info_1);
+                } else {
+                    printf("entrou aqui");
+                    free((*raiz)->info_1);
+                    free(*raiz);
+                    *raiz = NULL;
+                }
+            }
+            else
+                free((*raiz)->info_2);
+        } else {
+            if (strcmp((*raiz)->info_1->nome, titulo) == 0) {
+                Artista *swap = findmaximum_A((*raiz)->esq);
+                free((*raiz)->info_1);
+                // Usando memcpy para copiar a memória de swap->info_1 para info_1
+                memcpy(&(*raiz)->info_1, &swap->info_1, sizeof(Artista));
+                removeArtista(&(*raiz)->esq, swap->info_1->nome);
+            } else {
+                Artista *swap = findminimum_A((*raiz)->dir);
+                free((*raiz)->info_2);
+                // Usando memcpy para copiar a memória de swap->info_2 para info_2
+                memcpy(&(*raiz)->info_2, &swap->info_2, sizeof(Artista));
+                removeArtista(&(*raiz)->dir, swap->info_2->nome);
+            }
+        }
+    } else {
+        if (strcmp((*raiz)->info_1->nome, titulo) > 0) {
+            removeArtista(&(*raiz)->esq, titulo); 
+        } else if (strcmp((*raiz)->info_1->nome, titulo) <= 0 && (*raiz)->num_info == 2) {
+            removeArtista(&(*raiz)->centro, titulo);
+        } else {
+            if (strcmp((*raiz)->info_1->nome, titulo) < 0) {
+                removeArtista(&(*raiz)->centro, titulo);
+            } else {
+                removeArtista(&(*raiz)->dir, titulo);
+            }
+        }
+    }
+
+    merge_A(raiz); 
 }

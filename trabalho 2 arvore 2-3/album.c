@@ -216,6 +216,93 @@ Album *achar_album(Album *raiz, const char *palavra)
 }
 
 
+Album* findminimum(Album* no) {
+    if (no == NULL) 
+        return NULL;  
+    
+    while (no->esq != NULL) 
+        no = no->esq;
+    
+    return no;
+}
+
+Album* findmaximum(Album* no) {
+    if (no == NULL) 
+        return NULL;  
+    
+    while (no->dir != NULL) 
+        no = no->dir;
+    
+    return no;
+}
+
+
+void merge(Album *raiz) {
+    if (raiz == NULL || raiz->num_info == 1) 
+        return;
+
+    Album *pai = NULL; 
+    Album *irmao = NULL; 
+
+    if (raiz->esq != NULL) {
+        pai = raiz;
+        irmao = raiz->esq;
+    } else if (raiz->dir != NULL) {
+        pai = raiz;
+        irmao = raiz->dir;
+    } else if (raiz->centro != NULL) {
+        pai = raiz;
+        irmao = raiz->centro;
+    } else if (raiz->esq != NULL && raiz->dir != NULL) {
+        pai = raiz;
+        irmao = raiz->esq;
+    }
+
+    if (irmao != NULL && irmao->num_info == 1) {
+        if (pai->esq == raiz) {
+            pai->centro = irmao->esq;
+            pai->info_2 = pai->info_1;
+            pai->info_1 = irmao->info_1;
+            pai->dir = irmao->centro;
+            free(irmao);
+            pai->num_info = 2;
+        } else if (pai->centro == raiz) {
+            pai->info_2 = irmao->info_1;
+            pai->dir = pai->centro;
+            pai->centro = irmao->centro;
+            free(irmao);
+            pai->num_info = 2;
+        } else if (pai->dir == raiz) {
+            pai->info_2 = irmao->info_1;
+            pai->dir = irmao->centro;
+            free(irmao);
+            pai->num_info = 2;
+        }
+    } else {
+        if (pai->esq == raiz) {
+            irmao->info_1 = pai->info_1;
+            pai->info_1 = pai->info_2;
+            irmao->centro = irmao->esq;
+            irmao->esq = irmao->dir;
+            irmao->dir = NULL;
+            pai->num_info = 1;
+        } else if (pai->centro == raiz) {
+            irmao->info_1 = pai->info_1;
+            pai->info_1 = pai->info_2;
+            irmao->dir = irmao->esq;
+            irmao->esq = irmao->centro;
+            irmao->centro = NULL;
+            pai->num_info = 1;
+        } else if (pai->dir == raiz) {
+            irmao->info_1 = pai->info_2;
+            irmao->centro = irmao->dir;
+            irmao->dir = NULL;
+            pai->num_info = 1;
+        }
+    }
+}
+
+
 void removeAlbum(Album *candidate, char titulo[50]) {
     if (candidate == NULL)
         return; 
@@ -231,13 +318,13 @@ void removeAlbum(Album *candidate, char titulo[50]) {
             if (strcmp(candidate->info_1->titulo, titulo) == 0) {
                 Album *swap = findmaximum(candidate->esq);
                 free(candidate->info_1);
-                candidate->info_1 = swap;
+                candidate->info_1 = swap->info_1;
                 removeAlbum(candidate->esq, swap->info_1->titulo);
             } else {
                 
                 Album *swap = findminimum(candidate->dir);
                 free(candidate->info_2);
-                candidate->info_2 = swap;
+                candidate->info_2 = swap->info_2;
                 removeAlbum(candidate->dir, swap->info_2->titulo);
             }
         }
@@ -259,24 +346,4 @@ void removeAlbum(Album *candidate, char titulo[50]) {
     }
 
     merge(candidate); 
-}
-
-Album* findminimum(Album* no) {
-    if (no == NULL) 
-        return NULL;  
-    
-    while (no->esq != NULL) 
-        no = no->esq;
-    
-    return no;
-}
-
-Album* findmaximum(Album* no) {
-    if (no == NULL) 
-        return NULL;  
-    
-    while (no->dir != NULL) 
-        no = no->dir;
-    
-    return no;
 }
