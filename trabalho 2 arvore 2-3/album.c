@@ -112,6 +112,7 @@ int folha_album(Album *raiz)
     return valid;
 }
 
+
 Album *inserir_album(Album **raiz, char *titulo, int ano_lancamento, int num_musicas, Album *pai, Info_album *infoSobe)
 {
     printf("entrou em inserir album\n");
@@ -212,4 +213,70 @@ Album *achar_album(Album *raiz, const char *palavra)
         }
     }
     return encontrada;
+}
+
+
+void removeAlbum(Album *candidate, char titulo[50]) {
+    if (candidate == NULL)
+        return; 
+
+    if (strcmp(candidate->info_1->titulo, titulo) == 0 || strcmp(candidate->info_2->titulo, titulo) == 0) {
+        if (folha_album(candidate)) {
+            if (strcmp(candidate->info_1->titulo, titulo) == 0)
+                free(candidate->info_1);
+            else
+                free(candidate->info_2);
+        } else {
+            
+            if (strcmp(candidate->info_1->titulo, titulo) == 0) {
+                Album *swap = findmaximum(candidate->esq);
+                free(candidate->info_1);
+                candidate->info_1 = swap;
+                removeAlbum(candidate->esq, swap->info_1->titulo);
+            } else {
+                
+                Album *swap = findminimum(candidate->dir);
+                free(candidate->info_2);
+                candidate->info_2 = swap;
+                removeAlbum(candidate->dir, swap->info_2->titulo);
+            }
+        }
+    } else {
+        if (strcmp(candidate->info_1->titulo, titulo) > 0) {
+            removeAlbum(candidate->esq, titulo); 
+        } else if (strcmp(candidate->info_1->titulo, titulo) <= 0 && candidate->num_info == 2) {
+   
+            removeAlbum(candidate->centro, titulo);
+        } else {
+            if (strcmp(candidate->info_1->titulo, titulo) < 0) {
+
+                removeAlbum(candidate->centro, titulo);
+            } else {
+
+                removeAlbum(candidate->dir, titulo);
+            }
+        }
+    }
+
+    merge(candidate); 
+}
+
+Album* findminimum(Album* no) {
+    if (no == NULL) 
+        return NULL;  
+    
+    while (no->esq != NULL) 
+        no = no->esq;
+    
+    return no;
+}
+
+Album* findmaximum(Album* no) {
+    if (no == NULL) 
+        return NULL;  
+    
+    while (no->dir != NULL) 
+        no = no->dir;
+    
+    return no;
 }
