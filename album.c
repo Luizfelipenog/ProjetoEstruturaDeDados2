@@ -69,66 +69,66 @@
         
     }
 
-    // void balanceamentobum(Albums **no){
+    void balanceamentobum(Albums **no){
 
-    //     if (*no == NULL) {
-    //         return;
-    //     }
-
-    //     if((*no)->dir != NULL && (*no)->dir->cor == 1)// SE e vermelho
-    //         rotacaoEsquerda_BUM(no);
-        
-    //     if((*no)->esq != NULL && (*no)->dir->cor == 1 && (*no)->esq->esq->cor == 1 )
-    //         rotacaoDireita_BUM(no);
-
-    //     if((*no)->esq != NULL && (*no)->dir != NULL && (*no)->esq->cor == 1 && (*no)->dir->cor == 1)
-    //         TrocaCorBUM(no);
-
-    // }
-
-    void balanceamentobum(Albums **raiz) {
-        if (*raiz == NULL) {
+        if (*no == NULL) {
             return;
         }
 
-        // Caso 1: O nó pai é vermelho
-        if ((*raiz)->esq != NULL && (*raiz)->esq->cor == 1) {
-            // Caso 1.1: O tio também é vermelho
-            if ((*raiz)->dir != NULL && (*raiz)->dir->cor == 1) {
-                TrocaCorBUM(raiz);  // Troca cor do pai e tio para preto
-                (*raiz)->esq->cor = 0;  // Atualiza cor do avô para vermelho
-            } else {
-                // Caso 1.2: O tio é preto ou nulo
-                if ((*raiz)->esq->esq != NULL && (*raiz)->esq->esq->cor == 1) {
-                    rotacaoDireita_BUM(raiz);
-                    TrocaCorBUM(raiz);  // Troca cor do pai e avô
-                } else if ((*raiz)->esq->dir != NULL && (*raiz)->esq->dir->cor == 1) {
-                    rotacaoEsquerda_BUM(&((*raiz)->esq));
-                    rotacaoDireita_BUM(raiz);
-                    TrocaCorBUM(raiz);  // Troca cor do pai e avô
-                }
-            }
-        }
+        if((*no)->dir->cor == 1)// SE e vermelho
+            rotacaoEsquerda_BUM(no);
+        
+        if((*no)->esq != NULL && (*no)->esq->cor == 1 && (*no)->esq->esq->cor == 1 )
+            rotacaoDireita_BUM(no);
 
-        // Caso 2: O nó direito é vermelho
-        if ((*raiz)->dir != NULL && (*raiz)->dir->cor == 1) {
-            // Caso 2.1: O tio também é vermelho
-            if ((*raiz)->esq != NULL && (*raiz)->esq->cor == 1) {
-                TrocaCorBUM(raiz);  // Troca cor do pai e tio para preto
-                (*raiz)->dir->cor = 0;  // Atualiza cor do avô para vermelho
-            } else {
-                // Caso 2.2: O tio é preto ou nulo
-                if ((*raiz)->dir->dir != NULL && (*raiz)->dir->dir->cor == 1) {
-                    rotacaoEsquerda_BUM(raiz);
-                    TrocaCorBUM(raiz);  // Troca cor do pai e avô
-                } else if ((*raiz)->dir->esq != NULL && (*raiz)->dir->esq->cor == 1) {
-                    rotacaoDireita_BUM(&((*raiz)->dir));
-                    rotacaoEsquerda_BUM(raiz);
-                    TrocaCorBUM(raiz);  // Troca cor do pai e avô
-                }
-            }
-        }
+        if((*no)->esq != NULL && (*no)->dir != NULL && (*no)->esq->cor == 1 && (*no)->dir->cor == 1)
+            TrocaCorBUM(no);
+
     }
+
+    // void balanceamentobum(Albums **raiz) {
+    //     if (*raiz == NULL) {
+    //         return;
+    //     }
+
+    //     // Caso 1: O nó pai é vermelho
+    //     if ((*raiz)->esq != NULL && (*raiz)->esq->cor == 1) {
+    //         // Caso 1.1: O tio também é vermelho
+    //         if ((*raiz)->dir != NULL && (*raiz)->dir->cor == 1) {
+    //             TrocaCorBUM(raiz);  // Troca cor do pai e tio para preto
+    //             (*raiz)->esq->cor = 0;  // Atualiza cor do avô para vermelho
+    //         } else {
+    //             // Caso 1.2: O tio é preto ou nulo
+    //             if ((*raiz)->esq->esq != NULL && (*raiz)->esq->esq->cor == 1) {
+    //                 rotacaoDireita_BUM(raiz);
+    //                 TrocaCorBUM(raiz);  // Troca cor do pai e avô
+    //             } else if ((*raiz)->esq->dir != NULL && (*raiz)->esq->dir->cor == 1) {
+    //                 rotacaoEsquerda_BUM(&((*raiz)->esq));
+    //                 rotacaoDireita_BUM(raiz);
+    //                 TrocaCorBUM(raiz);  // Troca cor do pai e avô
+    //             }
+    //         }
+    //     }
+
+    //     // Caso 2: O nó direito é vermelho
+    //     if ((*raiz)->dir != NULL && (*raiz)->dir->cor == 1) {
+    //         // Caso 2.1: O tio também é vermelho
+    //         if ((*raiz)->esq != NULL && (*raiz)->esq->cor == 1) {
+    //             TrocaCorBUM(raiz);  // Troca cor do pai e tio para preto
+    //             (*raiz)->dir->cor = 0;  // Atualiza cor do avô para vermelho
+    //         } else {
+    //             // Caso 2.2: O tio é preto ou nulo
+    //             if ((*raiz)->dir->dir != NULL && (*raiz)->dir->dir->cor == 1) {
+    //                 rotacaoEsquerda_BUM(raiz);
+    //                 TrocaCorBUM(raiz);  // Troca cor do pai e avô
+    //             } else if ((*raiz)->dir->esq != NULL && (*raiz)->dir->esq->cor == 1) {
+    //                 rotacaoDireita_BUM(&((*raiz)->dir));
+    //                 rotacaoEsquerda_BUM(raiz);
+    //                 TrocaCorBUM(raiz);  // Troca cor do pai e avô
+    //             }
+    //         }
+    //     }
+    // }
 
     void TrocaCorBUM(Albums **raiz){
         (*raiz)->cor = 1;

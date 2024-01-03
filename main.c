@@ -158,7 +158,6 @@ int main () {
                             album_temp = NULL;
                             break;
                     }
-                
                 } while (opcao_busca != 0);
                 break;
 
