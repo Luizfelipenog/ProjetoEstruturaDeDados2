@@ -72,13 +72,4 @@ gcc album.c artista.c musica.c main.c -o main.exe
 
 ```bash
 ./main.exe
-```
-
-## 📝 Licença
-
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
-
-## 📜 Contribuições
-
-Se você deseja contribuir para este projeto, faça um fork, crie uma branch para suas alterações e envie um pull request.
 
